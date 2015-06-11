@@ -77,8 +77,8 @@ WindowsにRuby自体が入ってない人はまず[RubyInstaller](http://rubyins
 コマンドプロンプトを開き、解凍した先のフォルダを開き以下のコマンドを実行してください。  
   
 ```
-ruby dk.rb init
-ruby dk.rb install
+>ruby dk.rb init
+>ruby dk.rb install
 ```
   
 ###SSLエラーバグの対処
