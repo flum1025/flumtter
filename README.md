@@ -21,7 +21,7 @@ UNIX系OSや""Windows""にも対応！
 ```
 $ git clone https://github.com/flum1025/flumtter.git
 $ cd flumtter
-$ ruby flumtter.rb #(Windowsの方はruby flumtter_4win.rb)
+$ ruby flumtter.rb #(Windowsの方はruby flumtter_4win.rb 第一引数にプロンプトの高さを指定する必要があります。プロパティのレイアウトからウィンドウの高さを取得し引数に入れてください。)
 
 ```
   
