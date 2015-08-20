@@ -94,7 +94,7 @@ def plugins_setting
   callback(:plugins_setting, input)
 end
 
-def account_maneger
+def account_manager
   loop do
     accounts = oauth_load
     arr = @userConfig[:curses_setting][:account_manager].dup
@@ -146,7 +146,7 @@ def setting
   when "p"
     plugins_setting
   when "a"
-    account_maneger
+    account_manager
   when "t"
     terminal_setting
   else

@@ -3,7 +3,7 @@
 @userConfig = {}
 @temp = {}
 
-def on_event(event,opt={},&blk)
+def on_event(event, opt={}, &blk)
   @events[event] ||= []
   @events[event] << blk
 end
@@ -19,7 +19,7 @@ plugins.each do |file|
   require file
 end
 
-def callback(event,object)
+def callback(event, object)
   return if !@events[event]
   @events[event].each do |c|
     c.call(object)
