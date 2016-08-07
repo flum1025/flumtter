@@ -1,123 +1,104 @@
-# Coding: UTF-8
 require 'twitter'
 
-@object_index = 0
+module Flumtter
+  class Twitter
+    @@events = {}
 
-def config(data)
-  @user_id = data[0].to_i
-  @screen_name = data[1]
-  @rest_client = Twitter::REST::Client.new do |config|
-    config.consumer_key        = data[2]
-    config.consumer_secret     = data[3]
-    config.access_token        = data[4]
-    config.access_token_secret = data[5]
-  end
-  @stream_client = Twitter::Streaming::Client.new do |config|
-    config.consumer_key        = data[2]
-    config.consumer_secret     = data[3]
-    config.access_token        = data[4]
-    config.access_token_secret = data[5]
-  end
-end
+    def self.on_event(event,&blk)
+      @@events[event] ||= []
+      @@events[event] << blk
+    end
 
-@stream = true
-
-def stream
-  puts "@#{@screen_name}'s stream_start!"
-  @stream_client.user(@option) do |object|
-    loop do
-      unless @stream
-        sleep(1)
-      else
-        break
+    def callback(event, object)
+      return if !@@events[event]
+      @@events[event].each do |c|
+        c.call(object)
       end
     end
-    @x = `tput cols`.to_i
-    @y = `tput lines`.to_i
-    case object
-    when Twitter::Tweet
-      kind = :tweet
-    when Twitter::Streaming::Event
-      kind = :event
-    when Twitter::Streaming::FriendList
-      kind = :friendlist
-    when Twitter::Streaming::DeletedTweet
-      kind = :deletedtweet
-    when Twitter::DirectMessage
-      kind = :directmessage
+
+    attr_reader :rest, :stream, :thread, :name, :id
+
+    def initialize(keys)
+      @name = keys[:screen_name]
+      @id = keys[:id]
+      @rest = ::Twitter::REST::Client.new keys
+      @stream = ::Twitter::Streaming::Client.new keys
+      @queue = Queue.new
+      @pause = false
     end
-    @temp[@object_index += 1] = object
-    callback(kind, object)
+
+    def change(keys)
+      kill
+      @name = keys[:screen_name]
+      @id = keys[:id]
+      @rest = ::Twitter::REST::Client.new keys
+      @stream = ::Twitter::Streaming::Client.new keys
+    end
+
+    def kill
+      @thread.kill
+      @ethread.kill
+      @queue.clear
+    end
+
+    def stream(options={})
+      puts "@#{@name}'s stream_start!"
+      execute
+      @thread = Thread.new do
+        begin
+          @stream.user(options) do |object|
+            Window.update
+            kind = case object
+            when ::Twitter::Tweet
+              :tweet
+            when ::Twitter::Streaming::Event
+              case object.name.to_s
+              when "favorite"
+                :favorite
+              when "unfavorite"
+                :unfavorite
+              when "follow"
+                :follow
+              when "unfollow"
+                :unfollow
+              else
+                :event
+              end
+            when ::Twitter::Streaming::FriendList
+              :friendlist
+            when ::Twitter::Streaming::DeletedTweet
+              :deletedtweet
+            when ::Twitter::DirectMessage
+              :directmessage
+            end
+            @queue.push [kind, object]
+          end
+        rescue EOFError
+          p :EOFError
+          retry
+        end
+      end
+    end
+
+    def execute
+      @ethread = Thread.new do
+        loop do
+          if @pause
+            sleep 0.1
+          else
+            kind, object = @queue.pop
+            callback(kind, [object,self])
+          end
+        end
+      end
+    end
+
+    def pause
+      @pause = true
+    end
+
+    def resume
+      @pause = false
+    end
   end
-rescue => ex
-  error(ex)
 end
-
-def tweet(text)
-  @rest_client.update(text)
-end
-
-def reply(text, id)
-  @rest_client.update(text, :in_reply_to_status_id => id)
-end
-
-def retweet(id)
-  @rest_client.retweet(id)
-end
-
-def favorite(id)
-  @rest_client.favorite(id)
-end
-
-def direct_message(user, text)
-  @rest_client.create_direct_message(user, text)
-end
-
-def user_info(screen_name)
-  return @rest_client.user(screen_name)
-end
-
-def get_mention(opt={})
-  return @rest_client.mentions(opt)
-end
-
-def get_favorite(id, opt={})
-  @rest_client.favorites(id, opt)
-end
-
-def get_user_timeline(id, opt={})
-  @rest_client.user_timeline(id, opt)
-end
-
-def get_follower_ids(id)
-  return @rest_client.follower_ids(id).to_a
-end
-
-def get_following_ids(id)
-  return @rest_client.friend_ids(id).to_a
-end
-
-def get_users(id)
-  return @rest_client.users(id)
-end
-
-def friendship(id, id2)
-  return @rest_client.friendship(id, id2)
-end
-
-def block(id)
-  @rest_client.block(id)
-end
-
-def unblock(id)
-  @rest_client.unblock(id)
-end
-
-def follow(id)
-  @rest_client.follow(id)
-end
-
-def unfollow(id)
-  @rest_client.unfollow(id)
-end
-
