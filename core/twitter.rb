@@ -26,6 +26,12 @@ module Flumtter
       @queue = Queue.new
       @pause = false
     end
+    
+    def read_buf(count=50)
+      @rest.home_timeline(count: count).each do |object|
+        TimeLineElement::Tweet.new(object)
+      end
+    end
 
     def change(keys)
       kill

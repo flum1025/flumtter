@@ -45,6 +45,7 @@ module Flumtter
     require 'pry' if options[:debug]
     keys = AccountSelector.select(ARGV.first)
     twitter = Twitter.new keys
+    twitter.read_buf
     twitter.stream
     Command.input_waiting(twitter)
   rescue Interrupt
