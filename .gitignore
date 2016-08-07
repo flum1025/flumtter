@@ -9,4 +9,4 @@
 
 # Ignore the default SQLite database.
 ##/db/*.sqlite3
-/data/flumtter.db
+/data/data.bin

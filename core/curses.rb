@@ -1,72 +1,58 @@
-# Coding: UTF-8
 require 'curses'
 
-@x = `tput cols`.to_i
-@y = `tput lines`.to_i
+module Flumtter
+  class Curses
+    TextSet = {
+      wrong_number: [
+        "【Wrong number!!!!!!!】",
+        "Please re-setting.",
+        "Please enter..."
+      ],
+      command_not_found: [
+        "【Command not found】",
+        "Please re-setting.",
+        "Please enter..."
+      ]
+    }
+    
+    class CursesException < FlumtterException;end
+    class ObjectError < CursesException;end
 
-@userConfig[:curses_setting] ||= {}
-@userConfig[:curses_setting][:wrong_number] = []
-@userConfig[:curses_setting][:wrong_number].push("wrong number!!!!!!!")
-@userConfig[:curses_setting][:wrong_number].push("Please re-setting.")
-@userConfig[:curses_setting][:wrong_number].push("Please enter...")
-  
-@userConfig[:curses_setting][:command_not_found] = []
-@userConfig[:curses_setting][:command_not_found].push("Command not found")
-@userConfig[:curses_setting][:command_not_found].push("Please re-setting.")
-@userConfig[:curses_setting][:command_not_found].push("Please enter...")
-
-def window_clear
-  s = Curses.stdscr.subwin(@y-2, @x-2, 1, 1)
-  s.refresh
-  s.clear
+    class << self
+      def window(texts)
+        raise ObjectError, 'String only' if texts.map{|a|a.kind_of?(Array)}.include?(true)
+        Window.update
+        y = x = 2
+        ::Curses.clear
+        s = ::Curses.stdscr.subwin(5+texts.size, 60, y, x)
+        s.box(?|, ?-, ?*)
+        texts.each do |text|
+          s.setpos(x, y)
+          s.addstr(text)
+          x += 1
+        end
+        s.refresh
+        s.setpos(x, y)
+        input = s.getstr
+        s.clear
+        s.close
+        ::Curses.close_screen
+        input.encode!('UTF-16', 'UTF-8', :invalid => :replace, :replace => '').encode!('UTF-8', 'UTF-16')
+      rescue => e
+        ::Curses.close_screen
+        Flumtter.error e
+        raise e
+      end
+    end
+  end
 end
 
-def subwindow(texts, high=10, width=60)
-  window_clear
-  x = 2
-  y = 2
-  s = Curses.stdscr.subwin(high, width, x, y)
-  s.clear
-  s.clrtoeol
-  s.box(?|, ?-, ?*)
-  texts.each do |text|
-    s.setpos(x, y)
-    s.addstr(text)
-    s.addstr("\n")
+module Curses
+  module_function
+  def clear
+    s = Curses.stdscr.subwin(Flumtter::Window.y-2, Flumtter::Window.x-2, 1, 1)
     s.refresh
-    x += 1
+    s.clear
+    s.close
   end
-  s.setpos(x, y)
-  input = s.getstr
-  input.encode!('UTF-16', 'UTF-8', :invalid => :replace, :replace => '')
-  input.encode!('UTF-8', 'UTF-16')
-  s.clear
-  s.close
-  Curses.close_screen
-  return input
-end
-
-def subwindow_one(texts, high=10, width=60)
-  window_clear
-  x = 1
-  y = 1
-  s = Curses.stdscr.subwin(high, width, x, y)
-  s.clear
-  s.clrtoeol
-  s.box(?|, ?-, ?*)
-  texts.each do |text|
-    s.setpos(x, y)
-    s.addstr(text)
-    s.addstr("\n")
-    s.refresh
-    x += 1
-  end
-  s.setpos(x, y)
-  input = s.getch
-  input.encode!('UTF-16', 'UTF-8', :invalid => :replace, :replace => '')
-  input.encode!('UTF-8', 'UTF-16')
-  s.clear
-  s.close
-  Curses.close_screen
-  return input
 end

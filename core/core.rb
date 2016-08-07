@@ -1,59 +1,75 @@
-# Coding: UTF-8
-@events = {}
-@userConfig = {}
-@temp = {}
-
-def on_event(event, opt={}, &blk)
-  @events[event] ||= []
-  @events[event] << blk
-end
-
-cores = Dir.glob(File.join(@SourcePath, "core/*.rb"))
-cores.delete_if{|n| n.include?("core/core.rb") }
-cores.each do |file|
-  require file
-end
-
-plugins = Dir.glob(File.join(@SourcePath, "plugins/*.rb"))
-plugins.each do |file|
-  require file
-end
-
-def callback(event, object)
-  return if !@events[event]
-  @events[event].each do |c|
-    c.call(object)
+module Flumtter
+  $SourcePath = File.expand_path('../../', __FILE__)
+  $userConfig = {}
+    
+  Thread.abort_on_exception = true
+  
+  class FlumtterException < StandardError;end
+    
+  module_function
+  def error(e)
+    if ex.message == "User is over daily status update limit."
+      print e.message.background_color.color(:white).dnl
+      exit
+    end
+    if ex.class.to_s == "Twitter::Error::TooManyRequests"
+      print e.class.to_s.background_color.color(:white).dnl
+      exit
+    end
+    if ex.message == "failed to create window"
+      print "#{ex.message}. terminal is too small. Please use more 65*15 size.".background_color.color(:white).dnl
+      exit
+    end
+    if ex.message == "nodename nor servname provided, or not known"
+      print "No network connection".background_color.color(:white).dnl
+      exit
+    end
+    if ex.message == "invalid byte sequence in UTF-8"
+      print "Faild. Please re-type.".background_color.color(:white).dnl
+      return
+    end
+    if ex.message == "execution expired"
+      "Faild:Timeout. Please retry.".background_color.color(:white).dnl
+      return
+    end
+    if ex.message == "Sorry, that page does not exist."
+      "User not found.".background_color.color(:white).dnl
+      return
+    end
+    puts [e.class, e.message, e.backtrace.join("\n")].join("\n").color
+  rescue
+    p e.class, e.message, e.backtrace
   end
-end
-
-def get_exact_size(string)
-  string.each_char.map{|c| c.bytesize == 1 ? 1 : 2}.reduce(0, &:+)
-end
-
-def indent(num=nil)
-  x = @x
-  x = x - num unless num == nil
-  str = ""
-  x.times do |i|
-    str << " "
+  
+  def start(options={})
+    require 'pry' if options[:debug]
+    keys = AccountSelector.select(ARGV.first)
+    twitter = Twitter.new keys
+    twitter.stream
+    Command.input_waiting(twitter)
+  rescue Interrupt
+    twitter.kill
+    puts "終了します".color
+  rescue => e
+    error e
   end
-  return str
-end
-
-def line(num=nil)
-  x = @x
-  x = x - num unless num == nil
-  str = ""
-  x.times do |i|
-    str << "-"
-  end
-  return str
-end
-
-def put(char, num)
-  text = ""
-  num.times{|i|
-    text << char
+  
+  $userConfig[:save_data] = Marshal.load(File.read(File.join($SourcePath, 'data', 'data.bin'))) rescue {}
+  at_exit {
+    puts 'data saved'
+    File.write(File.join($SourcePath, 'data', 'data.bin'), Marshal.dump($userConfig[:save_data]))
   }
-  return text
+  
+  Dir.glob(File.join($SourcePath, "core/*.rb")).delete_if{|n| n.include?("core/core.rb")}.each do |core|
+    require core
+  end
+  
+  print "Flumtter v4".title
+  at_exit {
+    print "".title
+  }
+  
+  Dir.glob(File.join($SourcePath, 'plugins', '*.rb')).each do |plugin|
+    require plugin
+  end
 end
