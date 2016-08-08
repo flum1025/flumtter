@@ -14,7 +14,19 @@ module Flumtter
           object = TimeLineElement::Base[$1.to_i]
           case object
           when ::Twitter::Tweet
-            twitter.rest.retweet(object.id)
+            if object.retweeted?
+              print 'already retweeted'.dnl.color(:cyan)
+            else
+              begin
+                twitter.rest.retweet(object.id)
+              rescue ::Twitter::Error::Forbidden => ex
+                if ex.message == "You have already retweeted this tweet."
+                  print 'already retweeted'.dnl.color(:cyan)
+                else
+                  raise ex
+                end
+              end
+            end
           else
             Curses.window ObjectError
           end

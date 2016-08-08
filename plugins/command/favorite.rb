@@ -14,7 +14,11 @@ module Flumtter
           object = TimeLineElement::Base[$1.to_i]
           case object
           when ::Twitter::Tweet
-            twitter.rest.favorite(object.id)
+            if object.favorited?
+              print 'already favorited'.color(:cyan).dnl
+            else
+              twitter.rest.favorite(object.id)
+            end
           else
             Curses.window ObjectError
           end
