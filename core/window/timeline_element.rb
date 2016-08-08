@@ -44,14 +44,14 @@ module Flumtter
 
     class Retweet < TweetBase
       def initialize(object)
-        super(object.retweeted_status, "<< @#{object.user.screen_name}")
+        super(object.retweeted_status, "<< @#{object.user.screen_name} :(#{object.retweeted_status.retweet_count})")
         print @text.color(:blue)
       end
     end
 
     class Fav < TweetBase
       def initialize(object)
-        super(object.target_object, "<< @#{object.source.screen_name}")
+        super(object.target_object, "<< @#{object.source.screen_name} :(#{object.target_object.favorite_count})")
         print @text.color(:yellow)
       end
     end
