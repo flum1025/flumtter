@@ -29,7 +29,7 @@ module Flumtter
     end
     
     def read_buf(count=50)
-      @rest.home_timeline(count: count).each do |object|
+      @rest.home_timeline(count: count).reverse_each do |object|
         TimeLineElement::Tweet.new(object)
       end
     end
