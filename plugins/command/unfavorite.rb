@@ -1,8 +1,8 @@
 module Flumtter
   class Command
-    class Delete < Base
+    class UnFavorite < Base
       Screen = [
-        "【Delete Screen】",
+        "【UnFavorite Screen】",
         "Please input target index.",
         "Syntax: '\#{index}'"
       ]
@@ -15,11 +15,11 @@ module Flumtter
           case object
           when ::Twitter::Tweet
             begin
-              twitter.rest.destroy_status(object.id)
-              print 'delete success'.dnl.color(:cyan)
-            rescue ::Twitter::Error::Forbidden => ex
-              if ex.message == "You may not delete another user's status."
-                print ex.message.dnl.color(:cyan)
+              twitter.rest.unfavorite(object.id)
+              print 'unfavorite success'.dnl.color(:cyan)
+            rescue ::Twitter::Error::NotFound => ex
+              if ex.message == "No status found with that ID."
+                print 'not favorited'.dnl.color(:cyan)
               else
                 raise ex
               end
@@ -33,12 +33,12 @@ module Flumtter
       end
     end
     
-    Help.add "k:Delete"
+    Help.add "l:UnFavorite"
 
     new do |input, twitter|
       case input
-      when /^(k|K|ｋ|Ｋ)(\s*|　*)(.*)/
-        Delete.new twitter, $3
+      when /^(l|L|l|L)(\s*|　*)(.*)/
+        UnFavorite.new twitter, $3
         true
       end
     end
