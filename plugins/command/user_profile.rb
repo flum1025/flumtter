@@ -27,12 +27,12 @@ module Flumtter
                     twitter.rest.update("@#{object.user.screen_name} #{$5}", :in_reply_to_status_id => object.id)
                   end
                 else
-                  Curses.window ObjectError
+                  Curses.window Base::ObjectError
                 end
               when /^exit/
                 break
               else
-                Curses.window SyntaxError
+                Curses.window Base::SyntaxError
               end
             end
           end

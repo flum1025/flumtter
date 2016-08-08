@@ -25,6 +25,7 @@ module Flumtter
       @stream = ::Twitter::Streaming::Client.new keys
       @queue = Queue.new
       @pause = false
+      @mutex = Mutex.new
     end
     
     def read_buf(count=50)
@@ -89,22 +90,23 @@ module Flumtter
     def execute
       @ethread = Thread.new do
         loop do
-          if @pause
-            sleep 0.1
-          else
-            kind, object = @queue.pop
+          kind, object = @queue.pop
+          begin
+            @mutex.lock
             callback(kind, [object,self])
+          ensure
+            @mutex.unlock
           end
         end
       end
     end
 
     def pause
-      @pause = true
+      @mutex.lock
     end
 
     def resume
-      @pause = false
+      @mutex.unlock
     end
   end
 end
