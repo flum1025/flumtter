@@ -95,7 +95,10 @@ module Flumtter
             @mutex.lock
             callback(kind, [object,self])
           ensure
-            @mutex.unlock
+            begin
+              @mutex.unlock
+            rescue ThreadError
+            end
           end
         end
       end
