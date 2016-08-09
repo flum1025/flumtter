@@ -21,6 +21,7 @@ module Flumtter
     def initialize(keys)
       @name = keys[:screen_name]
       @id = keys[:id]
+      @keys = keys
       @rest = ::Twitter::REST::Client.new keys
       @stream = ::Twitter::Streaming::Client.new keys
       @queue = Queue.new
@@ -34,7 +35,7 @@ module Flumtter
       end
     end
 
-    def change(keys)
+    def change(keys=@keys)
       kill
       @name = keys[:screen_name]
       @id = keys[:id]
