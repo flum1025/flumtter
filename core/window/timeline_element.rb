@@ -41,6 +41,13 @@ module Flumtter
         print @text
       end
     end
+    
+    class MyTweet < TweetBase
+      def initialize(object)
+        super(object)
+        print @text.color(:cyan)
+      end
+    end
 
     class Retweet < TweetBase
       def initialize(object)
@@ -73,7 +80,11 @@ module Flumtter
       if object.retweet?
         Retweet.new(object)
       else
-        Tweet.new(object)
+        if object.user.id == twitter.id
+          MyTweet.new(object)
+        else
+          Tweet.new(object)
+        end
       end
     end
 
