@@ -50,6 +50,7 @@ module Flumtter
 
     def stream(options={})
       puts "@#{@name}'s stream_start!"
+      print "@#{@name} #{TITLE}".title
       execute
       @thread = Thread.new do
         begin

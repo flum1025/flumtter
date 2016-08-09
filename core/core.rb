@@ -65,7 +65,8 @@ module Flumtter
     require core
   end
   
-  print "Flumtter v4".title
+  TITLE = "Flumtter"
+  print TITLE.title
   at_exit {
     print "".title
   }
