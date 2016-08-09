@@ -26,7 +26,7 @@ module Flumtter
     class TweetBase < Base
       def initialize(object, source="")
         super(object)
-        index = @@element.index(object)
+        index = @@element.rindex(object)
         @text = ""
         @text << "#{index} ".ljust(Window.x, '-', source).nl
         @text << "#{user(object.user)}".ljust(Window.x).nl
@@ -66,7 +66,7 @@ module Flumtter
     class DirectMessage < Base
       def initialize(object)
         super(object)
-        index = @@element.index(object)
+        index = @@element.rindex(object)
         text = ""
         text << "#{index} ".ljust(Window.x, '-').nl
         text << "#{user(object.sender)}".ljust(Window.x).nl
