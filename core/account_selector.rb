@@ -18,7 +18,6 @@ module Flumtter
       else
         Curses.window TEXT + $userConfig[:save_data][:accounts].values.map.with_index{|account,index|"#{index}:#{account[:screen_name]}"}
       end
-      ind=nil
       case input
       when /^(\d+)/
         unless $userConfig[:save_data][:accounts].keys[$1.to_i].nil?
@@ -30,6 +29,13 @@ module Flumtter
       when /regist/
         regist
         self.select
+      when /@([0-9a-z_]{1,15})/i
+        unless $userConfig[:save_data][:accounts][$1].nil?
+          $userConfig[:save_data][:accounts][$1]
+        else
+          Curses.window Curses::TextSet[:wrong_number]
+          self.select
+        end
       else
         Curses.window Curses::TextSet[:command_not_found]
         self.select
