@@ -1,8 +1,11 @@
 module Flumtter
   module BufWindow
     class Base
+      class NoMoreData < Exception; end
+      
       def initialize(&block)
         @block = block
+        @elements ||= [];@log ||= [];@log_cursor ||= 0;@buf ||= [];@cursor ||= nil
       end
       
       def size
@@ -15,7 +18,6 @@ module Flumtter
       end
 
       def next
-        @elements ||= [];@log ||= [];@log_cursor ||= 0;@buf ||= [];@cursor ||= nil
         @log_cursor += 1 if @log_cursor < 0
         unless @log_cursor.zero?
           @log_cursor = @log.rindex(@log.first) if @log[@log_cursor-1].nil?
@@ -40,6 +42,8 @@ module Flumtter
         end
         @log << arr
         arr
+      rescue NoMoreData
+        arr = ["No more data"]
       end
       
       def content(object, index)
