@@ -4,6 +4,7 @@ module Flumtter
     Help.add "c:Clear the terminal screen"
     Help.add "z:Forced termination and clear the terminal screen"
     Help.add "^:Reconnection"
+    Help.add "¥:Refresh"
 
     new do |input, twitter|
       case input
@@ -16,8 +17,13 @@ module Flumtter
       when /^(z|Z|ｚ|Ｚ)(\s*|　*)(.*)/
         print "\e[2J\e[f"
         exit
-      when /^(\^|＾)(\s*|　*)(.*)/
-        twitter.change
+      when /^(\^|＾|~)(\s*|　*)(.*)/
+        twitter.kill
+        twitter.stream
+        true
+      when /^(\¥|\|)(\s*|　*)(.*)/
+        twitter.kill
+        twitter.read_buf
         twitter.stream
         true
       end
