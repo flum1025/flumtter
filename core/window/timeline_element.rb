@@ -75,25 +75,5 @@ module Flumtter
         print text.color(:magenta)
       end
     end
-
-    Plugins.new(:tweet) do |object, twitter|
-      if object.retweet?
-        Retweet.new(object)
-      else
-        if object.user.id == twitter.id
-          MyTweet.new(object)
-        else
-          Tweet.new(object)
-        end
-      end
-    end
-
-    Plugins.new(:favorite) do |object, twitter|
-      Fav.new(object) if object.target.id == twitter.id || object.source.id == twitter.id
-    end
-    
-    Plugins.new(:directmessage) do |object, twitter|
-      DirectMessage.new(object)
-    end
   end
 end

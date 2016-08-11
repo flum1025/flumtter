@@ -17,9 +17,9 @@ module Flumtter
           @@texts << text
         end
 
-        def show
+        def show(twitter)
           input = Curses.window Header + @@texts
-          callback(input.chomp)
+          callback(input.chomp, twitter)
         end
 
         def new(&blk)
@@ -28,11 +28,11 @@ module Flumtter
         
         $userConfig[:save_data][:setting] ||= {}
 
-        def callback(input)
+        def callback(input, twitter)
           return if !@@events
           hook = []
           @@events.each do |c|
-            hook << c.call(input, $userConfig[:save_data][:setting])
+            hook << c.call(input, $userConfig[:save_data][:setting], twitter)
           end
           if !hook.include?(true)
             puts "Command not found".color
@@ -47,7 +47,7 @@ module Flumtter
   Command.new do |input, twitter|
     case input
     when /^(s|S|ｓ|Ｓ)(\s*|　*)(.*)/
-      Setting::Setting.show
+      Setting::Setting.show(twitter)
       true
     end
   end
