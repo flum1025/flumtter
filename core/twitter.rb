@@ -45,8 +45,8 @@ module Flumtter
     end
 
     def kill
-      @thread.kill
-      @ethread.kill
+      @thread.kill if !@thread.nil?
+      @ethread.kill if !@ethread.nil?
       @queue.clear
     end
 
