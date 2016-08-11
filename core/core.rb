@@ -38,7 +38,7 @@ module Flumtter
     end
     puts [e.class, e.message, e.backtrace.join("\n")].join("\n").color
   rescue
-    puts e.class, e.message, e.backtrace.join("\n")
+    puts e.class, e.message, e.backtrace
   end
   
   def start(options={})
