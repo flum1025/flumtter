@@ -2,8 +2,8 @@ module Flumtter
   class Plugins
     class Toast
       class EgoSearch < Base
-        def title
-          "#{super} #{@object.user.name}(@#{@object.user.screen_name})"
+        def subtitle
+          "#{@object.user.name}(@#{@object.user.screen_name})"
         end
       end
     end

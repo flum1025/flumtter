@@ -2,8 +2,8 @@ module Flumtter
   class Plugins
     class Toast
       class DirectMessage < Base
-        def title
-          "#{super} #{@object.sender.name}(@#{@object.sender.screen_name})"
+        def subtitle
+          "#{@object.sender.name}(@#{@object.sender.screen_name})"
         end
       end
     end

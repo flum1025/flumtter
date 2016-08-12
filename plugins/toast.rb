@@ -4,7 +4,7 @@ module Flumtter
       class Base
         ToastCommand = case HOSTOS
         when :OSX
-          lambda{|title, text|`osascript -e 'display notification "#{title}" with title "#{text}"'`}
+          lambda{|title, subtitle, text|`osascript -e 'display notification "#{text}" with title "#{title}" subtitle "#{subtitle}"'`}
         when :Linux
         when :Windows
         end
@@ -12,11 +12,15 @@ module Flumtter
         def initialize(object, twitter)
           @object = object
           @twitter = twitter
-          ToastCommand.call(object.text, title)
+          ToastCommand.call(title, subtitle, object.text)
         end
         
         def title
           "#{TITLE}(#{@twitter.name})"
+        end
+        
+        def subtitle
+          ""
         end
       end
     end
