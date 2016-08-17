@@ -4,11 +4,11 @@ module Flumtter
 
     TERMINAL = case HOSTOS
     when :OSX
-      "open -a 'Terminal' '#{$SourcePath}'"
+      "osascript -e 'tell application \"Terminal\" to do script \"ruby #{File.join($SourcePath, 'main.rb')}\"'"
     when :Linux
-      "gnome-terminal -e 'ruby #{File.join($SourcePath, 'flumtter.rb')}'"
+      "gnome-terminal -e 'ruby #{File.join($SourcePath, 'main.rb')}'"
     when :Windows
-      "start ruby #{File.join($SourcePath, 'flumtter.rb')}"
+      "start ruby #{File.join($SourcePath, 'main.rb')}"
     end
 
     new do |input, twitter|
