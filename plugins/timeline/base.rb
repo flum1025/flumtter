@@ -10,12 +10,13 @@ module Flumtter
       end
 
       def to_s
-        <<~EOF.color(color)
+        text = <<~EOF.color(fg_color)
           #{header}
           #{user}
           #{body}
           #{footer}
         EOF
+        bg_color.nil? ? text : text.background_color(bg_color)
       end
 
       private
@@ -25,6 +26,24 @@ module Flumtter
 
       def color
         :white
+      end
+
+      def fg_color
+        case color
+        when Symbol
+          color
+        when Array
+          color[0]
+        end
+      end
+
+      def bg_color
+        case color
+        when Symbol
+          nil
+        when Array
+          color[1]
+        end
       end
 
       def created_at

@@ -26,4 +26,15 @@ module Flumtter
     end
     puts cls.new(object, twitter).to_s
   end
+
+  Client.on_event(:directmessage) do |object, twitter|
+    puts TimeLine::DirectMessage.new(object, twitter).to_s
+  end
+
+  Client.on_event(:deletedtweet) do |object, twitter|
+    begin
+      puts TimeLine::DeletedTweet.new(object, twitter).to_s
+    rescue TimeLine::DeletedTweet::TweetNotFound
+    end
+  end
 end
