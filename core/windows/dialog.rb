@@ -29,18 +29,16 @@ module Flumtter
     end
 
     def call(str)
-      call_size = 0
       @commands.each do |command|
         if m = str.match(command.command)
-          call_size += 1
-          command.call(m)
+          return command.call(m)
         end
       end
-      call_size
+      raise Dispel::NoCommandError
     end
 
     def show(recall=false, help=true)
-      call_size = Dispel::Screen.open do |screen|
+      Dispel::Screen.open do |screen|
         Dispel::Window.open(@hight, @width, 0, 0) do |win|
           win.box(?|,?-,?*)
           win.setpos(win.cury+2, win.curx+1)
@@ -65,7 +63,8 @@ module Flumtter
           end
         end
       end
-      show(recall) if recall && !call_size.nil? && call_size.zero?
+    rescue Dispel::NoCommandError
+      show(recall) if recall
     end
   end
 end

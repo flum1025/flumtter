@@ -32,8 +32,8 @@ module Flumtter
             #{@@account_list.map.with_index{|a,i|"#{i}: #{a.screen_name}"}.join("\n")}
           EOF
           dialog.command(/^regist$/){|m|regist}
-          dialog.command(/^(\d+)$/){|m|}
-          dialog.show(true)
+          dialog.command(/^(\d+)$/){|m|@@account_list[m[1].to_i]}
+          t = dialog.show(true)
         end
       end
 

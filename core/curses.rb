@@ -1,12 +1,12 @@
 require 'dispel'
 module Dispel
   class CloseWindow < StandardError; end
+  class NoCommandError < StandardError; end
 
   class Window
     class << self
       def open(*args)
         win = Curses::Window.new(*args)
-        #Curses.echo
         yield win
       rescue CloseWindow
       ensure
@@ -32,14 +32,6 @@ module Dispel
           return buf
         when :escape
           raise CloseWindow
-=begin
-          buf.clear
-          while win.curx > x
-            win.setpos(win.cury, win.curx-1)
-            win.delch()
-            win.insch(" ")
-          end
-=end
         when :backspace
           buf.chop!
           while win.curx > x
