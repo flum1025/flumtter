@@ -13,19 +13,25 @@ module Flumtter
     File.write(data_path, Marshal.dump(Config))
   }
 
+  Thread.abort_on_exception = true
+
   module_function
   def sarastire(path, file=nil)
     path = file.nil? ? SourcePath.join(path, '*.rb') : SourcePath.join(path, file)
     Dir.glob(path).each{|plugin|require plugin}
   end
 
+  sarastire 'core', 'util.rb'
+  sarastire 'setting'
   sarastire 'core'
   sarastire 'plugins'
 
-  "Flumtter".terminal_title
+  TITLE = "Flumtter"
+  TITLE.terminal_title
 
   def start
     options = Initializer.optparse
+    Setting.merge(options)
     AccountSelector.select options
   rescue Interrupt
   end

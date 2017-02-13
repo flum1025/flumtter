@@ -5,13 +5,14 @@ require_relative 'hash'
 
 module Flumtter
   class Account
-    attr_reader :screen_name, :keys
+    attr_reader :id, :screen_name, :keys
     def initialize(options)
       raise ArgumentError, "Argument is not hash" unless options.is_a?(Hash)
       keys = %i(consumer_key consumer_secret access_token access_token_secret)
       options.requires(*%i(screen_name)+keys)
       @screen_name = options[:screen_name]
-      @keys = Hash[keys.zip options.values_at(keys)]
+      @id = options[:id]
+      @keys = Hash[keys.zip options.values_at(*keys)]
     end
   end
 
@@ -20,10 +21,13 @@ module Flumtter
 
     class << self
       def select(options={})
-        if options[:id]
+        account = if options[:id]
           @@account_list[options[:id]]
         elsif options[:name]
           @@account_list.select{|a|a.screen_name == options[:name]}.first
+        elsif @@account_list.empty?
+          regist
+          @@account_list.first
         else
           dialog = Dialog.new("Account Selector", <<~EOF)
             Please input your account number.
@@ -31,10 +35,11 @@ module Flumtter
 
             #{@@account_list.map.with_index{|a,i|"#{i}: #{a.screen_name}"}.join("\n")}
           EOF
-          dialog.command(/^regist$/){|m|regist}
-          dialog.command(/^(\d+)$/){|m|@@account_list[m[1].to_i]}
-          t = dialog.show(true)
+          dialog.command(/^regist$/, "account registration"){|m|regist}
+          dialog.command(/^([#{@@account_list.size.times.to_a.join(",")}])$/, "account index"){|m|@@account_list[m[1].to_i]}
+          dialog.show(true)
         end
+        Client.new account
       end
 
       def regist
@@ -71,7 +76,8 @@ module Flumtter
           access_token = request_token.get_access_token(:oauth_verifier => m[1])
           keys[:access_token] = access_token.token
           keys[:access_token_secret] = access_token.secret
-          keys[:screen_name] = Twitter::REST::Client.new(keys).user.screen_name
+          user = Twitter::REST::Client.new(keys).user
+          keys[:id], keys[:screen_name] = user.id, user.screen_name
           Config[:accounts] << keys
           @@account_list = Config[:accounts].map{|a|Account.new(a)}
         end

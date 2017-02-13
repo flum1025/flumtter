@@ -3,9 +3,10 @@ module Flumtter
     include Dispel::Util
 
     class Command
-      attr_reader :command
-      def initialize(command, blk)
+      attr_reader :command, :help
+      def initialize(command, help="", blk)
         @command = command
+        @help = help
         @blk = blk
       end
 
@@ -20,21 +21,28 @@ module Flumtter
       @title = title
       @body = body
       @hight = hight + 8
-      @width = width
+      @width = [width,title.title.exact_size+2].max
       @commands = []
     end
 
-    def command(command, &blk)
-      @commands << Command.new(command, blk)
+    def command(command, help="", &blk)
+      @commands << Command.new(command, help, blk)
     end
 
     def call(str)
-      @commands.each do |command|
-        if m = str.match(command.command)
-          return command.call(m)
+      if str == "?"
+        Dialog.new("Command List", <<~EOF).show(false, false)
+          #{@commands.map{|c|[c.command.inspect, c.help].join("\n#{" "*4}")}.join("\n")}
+        EOF
+        raise Dispel::NoCommandError
+      else
+        @commands.each do |command|
+          if m = str.match(command.command)
+            return command.call(m)
+          end
         end
+        raise Dispel::NoCommandError
       end
-      raise Dispel::NoCommandError
     end
 
     def show(recall=false, help=true)

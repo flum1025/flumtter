@@ -7,6 +7,7 @@ module Dispel
     class << self
       def open(*args)
         win = Curses::Window.new(*args)
+        win.keypad(true)
         yield win
       rescue CloseWindow
       ensure
@@ -23,7 +24,7 @@ module Dispel
   module Util
     def getstr(win)
       buf = ""
-      x =win.curx
+      x = win.curx
       loop do
         case input = Dispel::Keyboard.translate_key_to_code(win.getch)
         when :"Ctrl+c"
@@ -32,6 +33,15 @@ module Dispel
           return buf
         when :escape
           raise CloseWindow
+        when :left
+          if win.curx > x
+            win.setpos(win.cury, win.curx-1)
+          end
+        when :right
+          if win.curx <= buf.size
+            win.setpos(win.cury, win.curx+1)
+          end
+          # TODO: 文字移動して削除入力
         when :backspace
           buf.chop!
           while win.curx > x
@@ -40,12 +50,12 @@ module Dispel
             win.insch(" ")
           end
           win.addstr(buf)
+        when String
+          buf << input
+          win.setpos(win.cury, win.curx)
+          win.addch(input)
         else
-          if input.is_a?(String)
-            buf << input
-            win.setpos(win.cury, win.curx)
-            win.addch(input)
-          end
+          p input
         end
       end
     end
