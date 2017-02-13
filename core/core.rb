@@ -1,77 +1,32 @@
+require 'pry'
+
 module Flumtter
-  $SourcePath = File.expand_path('../../', __FILE__)
-  $userConfig = {}
-    
-  Thread.abort_on_exception = true
-  
-  class FlumtterException < StandardError;end
-    
-  module_function
-  def error(e)
-    if ex.message == "User is over daily status update limit."
-      print e.message.background_color.color(:white).dnl
-      exit
-    end
-    if ex.class.to_s == "Twitter::Error::TooManyRequests"
-      print e.class.to_s.background_color.color(:white).dnl
-      exit
-    end
-    if ex.message == "failed to create window"
-      print "#{ex.message}. terminal is too small. Please use more 65*15 size.".background_color.color(:white).dnl
-      exit
-    end
-    if ex.message == "nodename nor servname provided, or not known"
-      print "No network connection".background_color.color(:white).dnl
-      exit
-    end
-    if ex.message == "invalid byte sequence in UTF-8"
-      print "Faild. Please re-type.".background_color.color(:white).dnl
-      return
-    end
-    if ex.message == "execution expired"
-      "Faild:Timeout. Please retry.".background_color.color(:white).dnl
-      return
-    end
-    if ex.message == "Sorry, that page does not exist."
-      "User not found.".background_color.color(:white).dnl
-      return
-    end
-    puts [e.class, e.message, e.backtrace.join("\n")].join("\n").color
-  rescue
-    puts e.class, e.message, e.backtrace
+  SourcePath = File.expand_path('../../', __FILE__)
+  def SourcePath.join(*args)
+    File.join(SourcePath, *args)
   end
-  
-  def start(options={})
-    require 'pry' if options[:debug]
-    keys = AccountSelector.select(ARGV.first)
-    twitter = Twitter.new keys
-    twitter.read_buf unless options[:non_read_buf]
-    twitter.stream unless options[:non_stream]
-    Command.input_waiting(twitter)
-  rescue Interrupt
-    twitter.kill
-    puts "終了します".color
-  rescue => e
-    error e
-  end
-  
-  $userConfig[:save_data] = Marshal.load(File.read(File.join($SourcePath, 'data', 'data.bin'))) rescue {}
+
+  data_path = SourcePath.join("data", "data.bin")
+  Config = Marshal.load(File.read(data_path)) rescue {}
   at_exit {
     puts 'data saved'
-    File.write(File.join($SourcePath, 'data', 'data.bin'), Marshal.dump($userConfig[:save_data]))
+    File.write(data_path, Marshal.dump(Config))
   }
-  
-  Dir.glob(File.join($SourcePath, "core/*.rb")).delete_if{|n| n.include?("core/core.rb")}.each do |core|
-    require core
+
+  module_function
+  def sarastire(path, file=nil)
+    path = file.nil? ? SourcePath.join(path, '*.rb') : SourcePath.join(path, file)
+    Dir.glob(path).each{|plugin|require plugin}
   end
-  
-  TITLE = "Flumtter"
-  print TITLE.title
-  at_exit {
-    print "".title
-  }
-  
-  Dir.glob(File.join($SourcePath, 'plugins', '*.rb')).each do |plugin|
-    require plugin
+
+  sarastire 'core'
+  sarastire 'plugins'
+
+  "Flumtter".terminal_title
+
+  def start
+    options = Initializer.optparse
+    AccountSelector.select options
+  rescue Interrupt
   end
 end

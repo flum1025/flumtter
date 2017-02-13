@@ -1,66 +1,83 @@
 require 'oauth'
 require 'oauth/consumer'
+require 'twitter'
+require_relative 'hash'
 
 module Flumtter
-  class AccountSelector
-    TEXT = [
-      "【Account Setting】",
-      "Please input your account number.",
-      "Input 'regist' if you want to regist new account."
-    ]
-
-    def self.select(ind=nil)
-      $userConfig[:save_data][:accounts] ||= {}
-      input = if !ind.nil?
-        ind
-      elsif $userConfig[:save_data][:accounts].size.zero?
-        "regist"
-      else
-        Curses.window TEXT + $userConfig[:save_data][:accounts].values.map.with_index{|account,index|"#{index}:#{account[:screen_name]}"}
-      end
-      case input
-      when /^(\d+)/
-        unless $userConfig[:save_data][:accounts].keys[$1.to_i].nil?
-          $userConfig[:save_data][:accounts][$userConfig[:save_data][:accounts].keys[$1.to_i]]
-        else
-          Curses.window Curses::TextSet[:wrong_number]
-          self.select
-        end
-      when /regist/
-        regist
-        self.select
-      when /@([0-9a-z_]{1,15})/i
-        unless $userConfig[:save_data][:accounts][$1].nil?
-          $userConfig[:save_data][:accounts][$1]
-        else
-          Curses.window Curses::TextSet[:wrong_number]
-          self.select
-        end
-      else
-        Curses.window Curses::TextSet[:command_not_found]
-        self.select
-      end
+  class Account
+    attr_reader :screen_name, :keys
+    def initialize(options)
+      raise ArgumentError, "Argument is not hash" unless options.is_a?(Hash)
+      keys = %i(consumer_key consumer_secret access_token access_token_secret)
+      options.requires(*%i(screen_name)+keys)
+      @screen_name = options[:screen_name]
+      @keys = Hash[keys.zip options.values_at(keys)]
     end
-    
-    def self.regist
-      print "Enter your consumer_key: "; consumer_key = STDIN.gets.chomp
-      consumer_key = $userConfig[:save_data][:accounts].values.last[:consumer_key] if consumer_key.size.zero?
-      print "Enter your consumer_secret: ";consumer_secret = STDIN.gets.chomp
-      consumer_secret = $userConfig[:save_data][:accounts].values.last[:consumer_secret] if consumer_secret.size.zero?
-      consumer = OAuth::Consumer.new(consumer_key ,consumer_secret,{:site=>"https://api.twitter.com"})
-      request_token = consumer.get_request_token
-      puts "Please access this URL: ","#{request_token.authorize_url}","and get the Pin code."
-      print "Enter your Pin code: "
-      access_token = request_token.get_access_token(:oauth_verifier => STDIN.gets.chomp)
-      keys = {
-        consumer_key: consumer_key,
-        consumer_secret: consumer_secret,
-        access_token: access_token.token,
-        access_token_secret: access_token.secret
-      }
-      user = ::Twitter::REST::Client.new(keys).user
-      [:id, :screen_name].map{|x| keys[x] = user.send(x)}
-      $userConfig[:save_data][:accounts][keys[:screen_name]] = keys
+  end
+
+  class AccountSelector
+    @@account_list = (Config[:accounts] ||= []).map{|a|Account.new(a)}
+
+    class << self
+      def select(options={})
+        if options[:id]
+          @@account_list[options[:id]]
+        elsif options[:name]
+          @@account_list.select{|a|a.screen_name == options[:name]}.first
+        else
+          dialog = Dialog.new("Account Selector", <<~EOF)
+            Please input your account number.
+            Input 'regist' if you want to regist new account.
+
+            #{@@account_list.map.with_index{|a,i|"#{i}: #{a.screen_name}"}.join("\n")}
+          EOF
+          dialog.command(/^regist$/){|m|regist}
+          dialog.command(/^(\d+)$/){|m|}
+          dialog.show(true)
+        end
+      end
+
+      def regist
+        dialog = Dialog.new("Register Twitter Account", <<~EOF, 6, 70)
+          Please enter according to the screen.
+        EOF
+        keys = {}
+        dialog.show do |win|
+          Curses.echo
+          win.setpos(win.cury+2, 1)
+          win.addstr("consumer_key: ")
+          keys[:consumer_key] = win.getstr
+          win.setpos(win.cury, 1)
+          win.addstr("consumer_secret: ")
+          keys[:consumer_secret] = win.getstr
+        end
+        if keys[:consumer_key].empty? && !@@account_list.empty?
+          keys[:consumer_key], keys[:consumer_secret] = 
+            @@account_list.last.keys.values_at(%i(consumer_key consumer_secret))
+        end
+
+        consumer = OAuth::Consumer.new(keys[:consumer_key], keys[:consumer_secret], {:site=>"https://api.twitter.com"})
+        request_token = consumer.get_request_token
+
+        dialog = Dialog.new("Register Twitter Account", <<~EOF)
+          Please access the following URL.
+          And get the Pin code.
+
+          #{request_token.authorize_url}
+
+          Enter your Pin code: 
+        EOF
+        dialog.command(/(.+)/) do |m|
+          access_token = request_token.get_access_token(:oauth_verifier => m[1])
+          keys[:access_token] = access_token.token
+          keys[:access_token_secret] = access_token.secret
+          keys[:screen_name] = Twitter::REST::Client.new(keys).user.screen_name
+          Config[:accounts] << keys
+          @@account_list = Config[:accounts].map{|a|Account.new(a)}
+        end
+        dialog.show(false, false)
+        select
+      end
     end
   end
 end
