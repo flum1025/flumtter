@@ -58,7 +58,7 @@ module Flumtter
         end
         if keys[:consumer_key].empty? && !@@account_list.empty?
           keys[:consumer_key], keys[:consumer_secret] = 
-            @@account_list.last.keys.values_at(%i(consumer_key consumer_secret))
+            @@account_list.last.keys.values_at(*%i(consumer_key consumer_secret))
         end
 
         consumer = OAuth::Consumer.new(keys[:consumer_key], keys[:consumer_secret], {:site=>"https://api.twitter.com"})

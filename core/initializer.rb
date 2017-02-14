@@ -17,6 +17,7 @@ module Initializer
     options = {}
     opt.on('-n VALUE', '--name VALUE', "account name"){|v|options[:name] = v}
     opt.on('-i VALUE', '--index VALUE', "account index"){|v|options[:id] = v.to_i}
+    opt.on('-s', '--non_stream', 'without stream'){|v|options[:non_stream] = v}
     opt.on('--args VALUE'){|v|options[:args] = v}
     @args.each{|args|args.call(opt, options)}
     opt.parse!(ARGV)

@@ -31,7 +31,7 @@ module Flumtter
 
   def start
     options = Initializer.optparse
-    Setting.merge(options)
+    Setting.merge!(options)
     AccountSelector.select options
   rescue Interrupt
   end

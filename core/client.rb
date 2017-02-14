@@ -23,7 +23,7 @@ module Flumtter
       @stream = Twitter::Streaming::Client.new(@account.keys)
       @queue = Queue.new
       @mutex = Mutex.new
-      stream
+      stream unless Setting[:non_stream]
       Keyboard.input(self)
     end
 

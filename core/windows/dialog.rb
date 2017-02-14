@@ -72,7 +72,7 @@ module Flumtter
         end
       end
     rescue Dispel::NoCommandError
-      show(recall) if recall
+      show(recall, help) if recall
     end
   end
 end

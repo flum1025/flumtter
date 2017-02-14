@@ -76,8 +76,23 @@ class String
     text = padstr.nil? ? _ljust(length) : _ljust(length, padstr)
     text << rstr
   end
+
+  def to_em
+    self.tr('0-9a-zA-Z', '０-９ａ-ｚＡ-Ｚ')
+  end
+
+  def to_en
+    self.tr('０-９ａ-ｚＡ-Ｚ', '0-9a-zA-Z')
+  end
+
+  def to_reg
+    reg = Regexp.union(self, self.to_em)
+    /#{Regexp.new(reg.source, Regexp::IGNORECASE)}[ |　]*(.*)/
+  end
 end
 
-#%i(white light_gray gray black red light_red green light_green brown yellow blue light_blue purple pink cyan light_cyan).each do |c|
-#  puts "#{c}".color(c)
-#end
+if $0 == __FILE__
+  %i(white light_gray gray black red light_red green light_green brown yellow blue light_blue purple pink cyan light_cyan).each do |c|
+    puts "#{c}".color(c)
+  end
+end
