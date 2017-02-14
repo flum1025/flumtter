@@ -26,9 +26,7 @@ module Dispel
       buf = ""
       x = win.curx
       loop do
-        i = win.getch
-        next unless i
-        case input = Dispel::Keyboard.translate_key_to_code(i)
+        case input = Dispel::Keyboard.translate_key_to_code(win.getch)
         when :"Ctrl+c"
           raise CloseWindow
         when :enter
@@ -53,21 +51,6 @@ module Dispel
           end
           win.addstr(buf)
         when String
-          input = case input.encoding.name
-          when "UTF-8" then input
-          when "ASCII-8BIT"
-            require 'timeout'
-            tmp = [input]
-            begin
-              Timeout.timeout(0.01) do
-                loop do
-                  tmp << Dispel::Keyboard.translate_key_to_code(win.getch)
-                end
-              end
-              rescue Timeout::Error
-            end
-            tmp.join.force_encoding('utf-8')
-          end
           buf << input
           win.setpos(win.cury, win.curx)
           win.addstr(input)

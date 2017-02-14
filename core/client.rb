@@ -19,6 +19,7 @@ module Flumtter
 
     def initialize(account)
       @account = account
+      debug if Setting[:debug]
       @rest = Twitter::REST::Client.new(@account.keys)
       @stream = Twitter::Streaming::Client.new(@account.keys)
       @queue = Queue.new
@@ -79,6 +80,18 @@ module Flumtter
     rescue Exception => e
       error e
       raise e
+    end
+
+    def debug
+      update = %i(update update_with_media retweet block unblock create_direct_message follow unfollow favorite unfavorite)
+      Twitter::REST::Client.class_eval do
+        update.each do |sym|
+          define_method sym do |*args|
+            puts "Debug: :#{sym} #{args}"
+            sleep 1
+          end
+        end
+      end
     end
   end
 end
