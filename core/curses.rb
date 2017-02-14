@@ -51,7 +51,7 @@ module Dispel
           end
           win.addstr(buf)
         when String
-          buf << input
+          buf << input.force_encoding("utf-8")
           win.setpos(win.cury, win.curx)
           win.addstr(input)
         else
