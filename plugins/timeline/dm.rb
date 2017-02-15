@@ -11,6 +11,10 @@ module Flumtter
         "#{@object.sender.name} (@#{@object.sender.screen_name})"
       end
 
+      def header
+        "#{index} ".ljust(Terminal.x, ?-, "@#{@object.sender.screen_name} => @#{@object.recipient.screen_name}")
+      end
+
       def footer
         created_at
       end

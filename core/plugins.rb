@@ -16,6 +16,7 @@ module Flumtter
     def plugin(blk)
       m = self.const_set(File.basename(blk.source_location[0], '.rb').to_camel.to_sym, Module.new)
       m.extend(Base)
+      m.extend(Util)
       m.instance_eval(&blk)
     end
   end

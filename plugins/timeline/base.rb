@@ -3,6 +3,10 @@ module Flumtter
     class Base
       @@elements = []
 
+      def self.[](key)
+        @@elements[key]
+      end
+
       def initialize(object, twitter)
         @object = object
         @twitter = twitter

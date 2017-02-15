@@ -12,5 +12,7 @@ Setting = {
       directmessage:  :purple,
       deletedtweet:   [:cyan, :magenta]
     }
-  }
+  },
+  timeline_load?: true,
+  timeline_load: 20
 }

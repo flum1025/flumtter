@@ -4,8 +4,6 @@ module Flumtter
       if m[1].empty?
         dialog = Dialog.new("Tweet Screen", <<~EOF)
           Please input tweet content.
-
-
         EOF
         dialog.command(/(.+)/) do |m|
           twitter.rest.update(m[1])

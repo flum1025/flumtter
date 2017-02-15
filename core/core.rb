@@ -21,6 +21,15 @@ module Flumtter
     Dir.glob(path).each{|plugin|require plugin}
   end
 
+  @events = Hash.new{|h,k|h[k] = []}
+  def on_event(event,&blk)
+    @events[event] << blk
+  end
+
+  def callback(event,object=nil)
+    @events[event].each{|blk|blk.call(object)}
+  end
+
   sarastire 'core', 'util.rb'
   sarastire 'setting'
   sarastire 'core'

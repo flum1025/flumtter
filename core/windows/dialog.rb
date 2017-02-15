@@ -31,7 +31,7 @@ module Flumtter
 
     def call(str)
       if str == "?"
-        Dialog.new("Command List", <<~EOF).show(false, false)
+        Popup.new("Command List", <<~EOF).show
           #{@commands.map{|c|[c.command.inspect, c.help].join("\n#{" "*4}")}.join("\n")}
         EOF
         raise Dispel::NoCommandError
@@ -62,8 +62,8 @@ module Flumtter
           if block_given?
             yield win
           else
+            win.setpos(win.cury+2, 1)
             if help
-              win.setpos(win.cury+2, 1)
               win.addstr "help: ?".rjust(win.maxx - 2)
               win.setpos(win.cury+1, 1)
             end
@@ -71,7 +71,8 @@ module Flumtter
           end
         end
       end
-    rescue Dispel::NoCommandError
+    rescue Dispel::NoCommandError => e
+      Popup::Error.new(e.class.to_s).show
       show(recall, help) if recall
     end
   end

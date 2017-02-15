@@ -62,6 +62,10 @@ class String
     self + "\n"*i
   end
 
+  def dnl
+    "\n#{self}\n"
+  end
+
   def has_mb?
     self.bytes do |b|
       return true if  (b & 0b10000000) != 0

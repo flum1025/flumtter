@@ -24,6 +24,7 @@ module Flumtter
       def input(twitter)
         loop do
           input = STDIN.noecho(&:gets)
+          next if input.nil?
           twitter.pause
           callback(input.chomp, twitter)
           twitter.resume
@@ -32,7 +33,7 @@ module Flumtter
 
       def callback(input, twitter)
         if input == "?"
-          Dialog.new("Command List", <<~EOF).show(false, false)
+          Popup.new("Command List", <<~EOF).show
             #{@@commands.map{|c|[c.name, c.help].join("\n#{" "*4}")}.join("\n")}
 
             For more information, please see the following Home page.
