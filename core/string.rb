@@ -93,6 +93,32 @@ class String
     reg = Regexp.union(self, self.to_em)
     /#{Regexp.new(reg.source, Regexp::IGNORECASE)}[ |　]*(.*)/
   end
+
+  def shift(n=2)
+    self.each_line.map do |line|
+      " "*n + line.chomp
+    end.join("\n")
+  end
+
+  def nshift(n=2)
+    self.each_line.map.with_index do |line, i|
+      if i.zero?
+        line.chomp
+      else
+        " "*n + line.chomp
+      end
+    end.join("\n")
+  end
+
+  def split_num(n)
+    self.scan(/.{1,#{n}}/).join("\n")
+  end
+
+  def range?(max)
+    unless 1 <= self.size && self.size <= max
+      raise RangeError
+    end
+  end
 end
 
 if $0 == __FILE__

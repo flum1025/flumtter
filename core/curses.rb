@@ -23,6 +23,17 @@ module Dispel
   end
 
   module Util
+    def addstr(win, str)
+      win.setpos(win.cury+1, 1)
+      win.addstr str
+    end
+
+    def add_multiline_str(win, str)
+      str.each_line do |line|
+        addstr(win, line.chomp)
+      end
+    end
+
     def getstr(win)
       buf = ""
       x = win.curx
