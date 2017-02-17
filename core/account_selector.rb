@@ -21,7 +21,7 @@ module Flumtter
 
     class << self
       def select(options={})
-        account = if options[:id]
+        if options[:id]
           @@account_list[options[:id]]
         elsif options[:name]
           @@account_list.select{|a|a.screen_name == options[:name]}.first
@@ -29,7 +29,7 @@ module Flumtter
           regist
           @@account_list.first
         else
-          dialog = Dialog.new("Account Selector", <<~EOF)
+          dialog = Window::Dialog.new("Account Selector", <<~EOF)
             Please input your account number.
             Input 'regist' if you want to regist new account.
 
@@ -39,11 +39,10 @@ module Flumtter
           dialog.command(/^([#{@@account_list.size.times.to_a.join(",")}])$/, "account index"){|m|@@account_list[m[1].to_i]}
           dialog.show(true)
         end
-        Client.new account
       end
 
       def regist
-        dialog = Dialog.new("Register Twitter Account", <<~EOF, 6, 70)
+        dialog = Window::Dialog.new("Register Twitter Account", <<~EOF, 6, 70)
           Please enter according to the screen.
         EOF
         keys = {}
@@ -64,7 +63,7 @@ module Flumtter
         consumer = OAuth::Consumer.new(keys[:consumer_key], keys[:consumer_secret], {:site=>"https://api.twitter.com"})
         request_token = consumer.get_request_token
 
-        dialog = Dialog.new("Register Twitter Account", <<~EOF)
+        dialog = Window::Dialog.new("Register Twitter Account", <<~EOF)
           Please access the following URL.
           And get the Pin code.
 

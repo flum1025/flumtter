@@ -41,7 +41,7 @@ module Flumtter
   def start
     options = Initializer.optparse
     Setting.merge!(options)
-    AccountSelector.select options
+    Client.new AccountSelector.select(options)
   rescue Interrupt
   end
 end

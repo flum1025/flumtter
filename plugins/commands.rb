@@ -5,7 +5,7 @@ module Flumtter
 
   plugin do
     Keyboard.add("v", "Version Information") do
-      Dialog.new("Version Information", <<~EOF).show(false,false)
+      Window::Dialog.new("Version Information", <<~EOF).show(false,false)
 
         Version:     #{Version}
         Updated at:  #{

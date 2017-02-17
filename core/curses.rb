@@ -2,6 +2,7 @@ require 'dispel'
 module Dispel
   class CloseWindow < StandardError; end
   class NoCommandError < StandardError; end
+  class Recall < StandardError; end
 
   class Window
     class << self

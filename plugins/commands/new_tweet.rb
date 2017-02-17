@@ -2,7 +2,7 @@ module Flumtter
   plugin do
     Keyboard.add("n", "New Tweet") do |m, twitter|
       if m[1].empty?
-        dialog = Dialog.new("Tweet Screen", <<~EOF)
+        dialog = Window::Dialog.new("Tweet Screen", <<~EOF)
           Please input tweet content.
         EOF
         dialog.command(/(.+)/) do |m|

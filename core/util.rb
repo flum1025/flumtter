@@ -29,7 +29,7 @@ module Flumtter
     end
 
     def dialog_for_index(title, body, with_screen_name=false)
-      dialog = Dialog.new(title, body)
+      dialog = Window::Dialog.new(title, body)
       dialog.command(index_regexp) do |m|
         [id2obj(m[1]), m[2]]
       end
@@ -55,6 +55,10 @@ module Flumtter
 
     def screen_name_regexp
       /^([@|＠][A-Za-z0-9_]{1,15})[ |　]*(.*)/
+    end
+
+    def command_value_regexp(command)
+      /^#{command}[ |　]*(.*)/
     end
 
     def error_handler

@@ -29,12 +29,20 @@ module Flumtter
           callback(input.chomp, twitter)
           twitter.resume
         end
+      rescue Interrupt
+      end
+
+      def command_list
+        char_len = @@commands.max_by{|c|c.name.size}.name.size + 1
+        @@commands.map do |c|
+          c.name.ljust(char_len) + c.help
+        end.join("\n")
       end
 
       def callback(input, twitter)
         if input == "?"
-          Popup.new("Command List", <<~EOF).show
-            #{@@commands.map{|c|[c.name, c.help].join("\n#{" "*4}")}.join("\n")}
+          Window::Popup.new("Command List", <<~EOF).show
+            #{command_list}
 
             For more information, please see the following Home page.
             http://github.com/flum1025/flumtter3
@@ -55,6 +63,8 @@ module Flumtter
         @@commands << Command.new(command, help) do |*args|
           begin
             blk.call(*args)
+          rescue SystemExit => e
+            raise e
           rescue Exception => e
             error e
           end

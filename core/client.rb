@@ -18,15 +18,23 @@ module Flumtter
     end
 
     def initialize(account)
-      @account = account
       debug if Setting[:debug]
-      @rest = Twitter::REST::Client.new(@account.keys)
-      @stream = Twitter::Streaming::Client.new(@account.keys)
       @queue = Queue.new
       @mutex = Mutex.new
+      set(account)
+      start
+      Keyboard.input(self)
+    end
+
+    def set(account)
+      @account = account
+      @rest = Twitter::REST::Client.new(@account.keys)
+      @stream = Twitter::Streaming::Client.new(@account.keys)
+    end
+
+    def start
       Flumtter.callback(:init, self)
       stream unless Setting[:non_stream]
-      Keyboard.input(self)
     end
 
     def stream
@@ -63,6 +71,7 @@ module Flumtter
     def kill
       @sthread.kill
       @ethread.kill
+      @queue.clear
     end
 
     def pause
