@@ -2,19 +2,6 @@ require_relative 'base'
 
 module Flumtter
   module Window
-    class Command
-      attr_reader :command, :help
-      def initialize(command, help="", blk)
-        @command = command
-        @help = help
-        @blk = blk
-      end
-
-      def call(*args)
-        @blk.call(*args)
-      end
-    end
-
     class Dialog < Base
       def initialize(*args)
         super
@@ -22,13 +9,13 @@ module Flumtter
       end
 
       def command(command, help="", &blk)
-        @commands << Command.new(command, help, blk)
+        @commands << Command.new(command, help, &blk)
       end
 
       def call(str)
         if str == "?"
           Window::Popup.new("Command List", <<~EOF).show
-            #{@commands.map{|c|[c.command.inspect, c.help].join("\n#{" "*4}")}.join("\n")}
+            #{Command.list(@commands)}
           EOF
           raise Dispel::Recall
         else

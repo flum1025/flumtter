@@ -82,7 +82,7 @@ module Flumtter
         def call(str)
           if str == "?"
             Window::Popup.new("Command List", <<~EOF).show
-              #{@commands.map{|c|[c.command.inspect, c.help].join("\n#{" "*4}")}.join("\n")}
+              #{Command.list(@commands)}
             EOF
             move(:keep)
             raise Dispel::Recall

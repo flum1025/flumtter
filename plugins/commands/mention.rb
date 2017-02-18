@@ -20,19 +20,19 @@ module Flumtter
     class self::Mention < Window::Buf::Screen
       def initialize(twitter)
         super(Plugins::Mention::Buf.new(twitter), "#{twitter.account.screen_name}'s Mentions")
-        command("f".to_reg, "Favorite") do |m|
+        command("f", "Favorite") do |m|
           error_handler do
             obj, _ = parse_index(m[1])
             Plugins::Favorite.favorite(obj, twitter)
           end
         end
-        command("t".to_reg, "Retweet") do |m|
+        command("t", "Retweet") do |m|
           error_handler do
             obj, _ = parse_index(m[1])
             Plugins::Retweet.retweet(obj, twitter)
           end
         end
-        command("r".to_reg, "Reply") do |m|
+        command("r", "Reply") do |m|
           error_handler do
             obj, m2 = parse_index(m[1])
             Plugins::Reply.update(obj, m2, twitter)

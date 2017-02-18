@@ -4,20 +4,6 @@ module Flumtter
   class Keyboard
     extend Util
 
-    class Command
-      attr_reader :name, :command, :help
-      def initialize(command, help="", &blk)
-        @name = command.is_a?(Regexp) ? command.inspect : command
-        @command = command.is_a?(String) ? command.to_reg : command
-        @help = help
-        @blk = blk
-      end
-
-      def call(*args)
-        @blk.call(*args)
-      end
-    end
-
     class << self
       @@commands = []
 
@@ -32,17 +18,10 @@ module Flumtter
       rescue Interrupt
       end
 
-      def command_list
-        char_len = @@commands.max_by{|c|c.name.size}.name.size + 1
-        @@commands.map do |c|
-          c.name.ljust(char_len) + c.help
-        end.join("\n")
-      end
-
       def callback(input, twitter)
         if input == "?"
           Window::Popup.new("Command List", <<~EOF).show
-            #{command_list}
+            #{Command.list(@@commands)}
 
             For more information, please see the following Home page.
             http://github.com/flum1025/flumtter3

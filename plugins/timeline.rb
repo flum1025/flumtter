@@ -25,7 +25,7 @@ module Flumtter
       elsif type.include?(:unfavorite)
         TimeLine::UnFavorite
       end
-      puts cls.new(object, twitter).to_s
+      puts cls.new(object, twitter).to_s if cls
     end
 
     Client.on_event(:directmessage) do |object, twitter|
