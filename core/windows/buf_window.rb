@@ -4,6 +4,8 @@ module Flumtter
   module Window
     module Buf
       class Buf
+        class NoMoreData < StandardError; end
+
         attr_accessor :cursor
         def initialize(base_cls=Element)
           @base_cls = base_cls
@@ -19,8 +21,14 @@ module Flumtter
           end
         end
 
+        def size
+          @buf.size
+        end
+
         def [](key)
-          @buf[key]
+          elem = @buf[key]
+          raise NoMoreData unless elem
+          elem
         end
 
         def adds(objects)
@@ -39,6 +47,7 @@ module Flumtter
           end
           elem = @buf[@cursor]
           @cursor += 1
+          raise NoMoreData unless elem
           elem
         end
 
@@ -120,12 +129,16 @@ module Flumtter
             @buf.cursor = @range.min + 1
           when :page
             i, count = 0, 0
-            elem = @buf[@range.min-i].element
-            while (count += elem.size_of_lines + 2) < @lines
-              i -= 1
+            begin
               elem = @buf[@range.min-i].element
+              while (count += elem.size_of_lines + 2) < @lines
+                i -= 1
+                elem = @buf[@range.min-i].element
+              end
+              @buf.cursor = @range.min+i
+            rescue Buf::NoMoreData
+              @buf.cursor = @buf.size - 1
             end
-            @buf.cursor = @range.min+i
           when :keep
             @buf.cursor = @range.min
           end
@@ -143,15 +156,18 @@ module Flumtter
               add_multiline_str(win, @body)
 
               start = @buf.cursor
-              loop do
-                elem = @buf.get.element
-                if (@lines = screen.lines) > win.cury + elem.size_of_lines + 4
-                  add_multiline_str(win, elem)
-                  win.setpos(win.cury+1,1)
-                else
-                  @buf.prev
-                  break
+              begin
+                loop do
+                  elem = @buf.get.element
+                  if (@lines = screen.lines) > win.cury + elem.size_of_lines + 4
+                    add_multiline_str(win, elem)
+                    win.setpos(win.cury+1,1)
+                  else
+                    @buf.prev
+                    break
+                  end
                 end
+              rescue Buf::NoMoreData
               end
               @range = start...@buf.cursor
 
