@@ -119,6 +119,14 @@ class String
       raise RangeError
     end
   end
+
+  def size_of_lines
+    self.each_line.to_a.size
+  end
+
+  def max_char_of_lines
+    self.each_line.max_by{|str|str.size}.size
+  end
 end
 
 if $0 == __FILE__

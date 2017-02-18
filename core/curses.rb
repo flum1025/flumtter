@@ -34,11 +34,16 @@ module Dispel
       end
     end
 
-    def getstr(win)
+    def getstr(win, ex=[])
       buf = ""
       x = win.curx
       loop do
-        case input = Dispel::Keyboard.translate_key_to_code(win.getch)
+        input = Dispel::Keyboard.translate_key_to_code(win.getch)
+        ex.each do |k|
+          return input if input == k
+        end
+
+        case input
         when :"Ctrl+c"
           raise CloseWindow
         when :enter
@@ -69,6 +74,12 @@ module Dispel
         else
           p input
         end
+      end
+    rescue NoMethodError => e
+      if e.backtrace.shift =~ /keyboard.rb:210/
+        raise Dispel::Recall
+      else
+        raise e
       end
     end
   end

@@ -4,8 +4,8 @@ module Flumtter
       include Dispel::Util
 
       def initialize(title, body, 
-                     hight=body.each_line.to_a.size,
-                     width=body.each_line.max_by{|str|str.size}.size+2)
+                     hight=body.size_of_lines,
+                     width=body.max_char_of_lines+2)
         @title = title
         @body = body
         @hight = hight + 8

@@ -65,7 +65,7 @@ module Flumtter
       begin
         yield
       rescue IndexError
-        puts "Please select correct index.".color
+        Window::Popup::Error.new("Please select correct index.").show
       rescue UnSupportError
         puts "This object is unsupported.".color
       rescue ExecutedError => e

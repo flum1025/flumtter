@@ -15,7 +15,7 @@ module Flumtter
       def show(recall=false)
         Dispel::Screen.open do |screen|
           view = @view.nil? ? "" : @view.call
-          Dispel::Window.open(@hight + (view.nil? ? 0 : view.each_line.to_a.size), @width, 0, 0) do |win|
+          Dispel::Window.open(@hight + (view.nil? ? 0 : view.size_of_lines), @width, 0, 0) do |win|
             win.box(?|,?-,?*)
             win.setpos(win.cury+2, win.curx+1)
             win.addstr @title.title
