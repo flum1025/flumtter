@@ -8,7 +8,9 @@ module Flumtter
       File.join(self, *args)
     end
   end
-  FileUtils.mkdir(UserPath) unless FileTest.exist?(UserPath)
+  unless FileTest.exist?(UserPath)
+    FileUtils.cp_r(SourcePath.join(".flumtter"), UserPath)
+  end
 
   data_path = UserPath.join("data", "data.bin")
   Config = Marshal.load(File.read(data_path)) rescue {}
