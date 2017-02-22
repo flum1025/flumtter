@@ -2,13 +2,24 @@ require 'terminal-notifier'
 
 module Flumtter
   class Toast
-    Options = {
-      title: TITLE,
-    }
+    def initialize(msg)
+      @msg = msg
+      @options = {title: TITLE}
+      if block_given?
+        yield(self)
+        show
+      end
+    end
 
-    class << self
-      def show(msg, options={})
-        TerminalNotifier.notify(msg, Options.merge(options)) if Setting[:toast?]
+    def show
+      TerminalNotifier.notify(@msg, @options)
+    end
+
+    def method_missing(method, *args)
+      if args.size == 1
+        @options[method] = args.first
+      else
+        super
       end
     end
   end
