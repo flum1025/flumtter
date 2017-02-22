@@ -14,5 +14,6 @@ Setting = {
     }
   },
   timeline_load?: true,
-  timeline_load: 20
+  timeline_load: 20,
+  toast?: true
 }

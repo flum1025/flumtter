@@ -75,6 +75,8 @@ module Flumtter
         puts "Please input content.".color
       rescue Twitter::Error::NotFound => e
         puts e.message.color
+      rescue Twitter::Error::Unauthorized => e
+        puts e.message.color
       end
     end
 

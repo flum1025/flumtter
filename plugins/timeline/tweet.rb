@@ -40,7 +40,7 @@ module Flumtter
       end
 
       def info
-        @object.retweeted_status.retweet_count
+        @object.quoted_status.retweet_count
       end
 
       def color

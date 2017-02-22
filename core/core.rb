@@ -30,12 +30,13 @@ module Flumtter
     @events[event].each{|blk|blk.call(object)}
   end
 
+  TITLE = "Flumtter"
+
   sarastire 'core', 'util.rb'
   sarastire 'setting'
   sarastire 'core'
   sarastire 'plugins'
 
-  TITLE = "Flumtter"
   TITLE.terminal_title
 
   def start
