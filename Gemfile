@@ -1,6 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'pry'
-gem 'oauth'
-gem 'dispel'
-gem 'terminal-notifier'
+# Specify your gem's dependencies in flumtter.gemspec
+gemspec

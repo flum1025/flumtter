@@ -2,11 +2,15 @@ require 'pry'
 
 module Flumtter
   SourcePath = File.expand_path('../../', __FILE__)
-  def SourcePath.join(*args)
-    File.join(SourcePath, *args)
+  UserPath = File.expand_path('~/.flumtter')
+  [SourcePath, UserPath].each do |path|
+    def path.join(*args)
+      File.join(self, *args)
+    end
   end
+  FileUtils.mkdir(UserPath) unless FileTest.exist?(UserPath)
 
-  data_path = SourcePath.join("data", "data.bin")
+  data_path = UserPath.join("data", "data.bin")
   Config = Marshal.load(File.read(data_path)) rescue {}
   at_exit {
     puts 'data saved'
@@ -19,6 +23,10 @@ module Flumtter
   def sarastire(path, file=nil)
     path = file.nil? ? SourcePath.join(path, '*.rb') : SourcePath.join(path, file)
     Dir.glob(path).each{|plugin|require plugin}
+  end
+
+  def user_plugin
+    Dir.glob(UserPath.join("plugins", "*.rb")).each{|plugin|require plugin}
   end
 
   @events = Hash.new{|h,k|h[k] = []}
@@ -36,6 +44,7 @@ module Flumtter
   sarastire 'setting'
   sarastire 'core'
   sarastire 'plugins'
+  user_plugin
 
   TITLE.terminal_title
 
