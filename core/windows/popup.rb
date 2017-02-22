@@ -25,5 +25,11 @@ module Flumtter
         super("Error", body)
       end
     end
+
+    class Popup::Success < Popup
+      def initialize(body)
+        super("Success", body)
+      end
+    end
   end
 end

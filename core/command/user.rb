@@ -24,12 +24,28 @@ module Flumtter
         end
       end
       command("follow", "Follow") do
+        error_handler do
+          twitter.rest.follow(user.screen_name)
+          Window::Popup::Success.new("follow success").show
+        end
       end
       command("unfollow", "Unfollow") do
+        error_handler do
+          twitter.rest.unfollow(user.screen_name)
+          Window::Popup::Success.new("unfollow success").show
+        end
       end
       command("block", "Block") do
+        error_handler do
+          twitter.rest.block(user.screen_name)
+          Window::Popup::Success.new("block success").show
+        end
       end
       command("unblock", "UnBlock") do
+        error_handler do
+          twitter.rest.unblock(user.screen_name)
+          Window::Popup::Success.new("unblock success").show
+        end
       end
     end
   end

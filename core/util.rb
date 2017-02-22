@@ -73,6 +73,8 @@ module Flumtter
         print text.dnl.color(:cyan)
       rescue NoContentError
         puts "Please input content.".color
+      rescue Twitter::Error::NotFound => e
+        puts e.message.color
       end
     end
 
