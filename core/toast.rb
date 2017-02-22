@@ -12,7 +12,7 @@ module Flumtter
     end
 
     def show
-      TerminalNotifier.notify(@msg, @options)
+      TerminalNotifier.notify(@msg, @options) if Setting[:toast?]
     end
 
     def method_missing(method, *args)
