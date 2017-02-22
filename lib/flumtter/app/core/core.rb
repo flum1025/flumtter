@@ -25,8 +25,9 @@ module Flumtter
     Dir.glob(path).each{|plugin|require plugin}
   end
 
-  def user_plugin
-    Dir.glob(UserPath.join("plugins", "*.rb")).each{|plugin|require plugin}
+  def sarastire_user(path, file=nil)
+    path = file.nil? ? UserPath.join(path, '*.rb') : UserPath.join(path, file)
+    Dir.glob(path).each{|plugin|require plugin}
   end
 
   @events = Hash.new{|h,k|h[k] = []}
@@ -41,10 +42,10 @@ module Flumtter
   TITLE = "Flumtter"
 
   sarastire 'core', 'util.rb'
-  sarastire 'setting'
+  sarastire_user 'setting'
   sarastire 'core'
   sarastire 'plugins'
-  user_plugin
+  sarastire_user 'plugins'
 
   TITLE.terminal_title
 
