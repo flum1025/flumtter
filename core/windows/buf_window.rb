@@ -67,13 +67,18 @@ module Flumtter
           @text ||= <<~EOF
             #{header}
             #{user}
-            #{body}
+            #{body.split_num(width - 1)}
             #{footer}
           EOF
         end
 
         def width
           Terminal.x-2
+        end
+
+        private
+        def header
+          "#{@index} ".ljust(width, ?-)
         end
       end
 

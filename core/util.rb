@@ -54,7 +54,7 @@ module Flumtter
     end
 
     def screen_name_regexp
-      /^([@|＠][A-Za-z0-9_]{1,15})[ |　]*(.*)/
+      /^([@|＠]*[A-Za-z0-9_]{1,15})[ |　]*(.*)/
     end
 
     def command_value_regexp(command)

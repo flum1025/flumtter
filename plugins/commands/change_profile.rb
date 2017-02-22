@@ -6,7 +6,7 @@ module Flumtter
 
       def initialize(twitter)
         @twitter = twitter
-        setting = Window::Setting.new("Change Profile", <<~EOF)
+        setting = Window::DynamicView.new("Change Profile", <<~EOF)
           Please select item you want to change with new profile.
           Syntax: '\#{item} \#{new profile}'
         EOF

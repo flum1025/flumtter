@@ -91,7 +91,7 @@ class String
 
   def to_reg
     reg = Regexp.union(self, self.to_em)
-    /#{Regexp.new(reg.source, Regexp::IGNORECASE)}[ |　]*(.*)/
+    /^#{Regexp.new(reg.source, Regexp::IGNORECASE)}[ |　]*(.*)/
   end
 
   def shift(n=2)
@@ -111,7 +111,18 @@ class String
   end
 
   def split_num(n)
-    self.scan(/.{1,#{n}}/).join("\n")
+    text = []
+    tmp = ""
+    self.each_char.each do |char|
+      if tmp.exact_size < n
+        tmp << char
+      else
+        text << tmp
+        tmp = char
+      end
+    end
+    text << tmp
+    text.join("\n")
   end
 
   def range?(max)
@@ -125,7 +136,8 @@ class String
   end
 
   def max_char_of_lines
-    self.each_line.max_by{|str|str.size}.size
+    max = self.each_line.max_by{|str|str.size}
+    max.nil? ? 0 : max.size
   end
 end
 

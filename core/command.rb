@@ -13,10 +13,12 @@ module Flumtter
     end
 
     def self.list(commands)
-      char_len = commands.max_by{|c|c.name.size}.name.size + 1
+      char_len = commands.max_by{|c|c.name.size}.name.size + 1 rescue 0
       commands.map do |c|
         c.name.ljust(char_len) + c.help
       end.join("\n")
     end
   end
+
+  sarastire "core/command"
 end

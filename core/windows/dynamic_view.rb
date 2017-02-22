@@ -2,7 +2,7 @@ require_relative 'base'
 
 module Flumtter
   module Window
-    class Setting < Dialog
+    class DynamicView < Dialog
       def initialize(*args)
         super
         @hight += 1

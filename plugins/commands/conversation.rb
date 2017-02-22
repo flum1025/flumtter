@@ -15,11 +15,13 @@ module Flumtter
     end
 
     class self::Conversation < Window::Buf::Screen
+      include Command::Tweet
+
       def initialize(obj, twitter)
         buf = Plugins::Conversation::Buf.new(twitter)
         buf.add(obj)
         super(buf, "Conversation")
-        TweetBaseCommand.add(self)
+        add_command(twitter)
       end
     end
 
