@@ -1,9 +1,9 @@
 # Flumtter
 
-![](https://github.com/flum1025/flumtter/wiki/images/main.png)
-
 Flumtter is CLI Twitter client.
-This client is supported multiple account.
+This client is supported multiple account and plugin.
+
+![](https://github.com/flum1025/flumtter/wiki/images/main.png)
 
 ## Installation
     $ gem install flumtter
