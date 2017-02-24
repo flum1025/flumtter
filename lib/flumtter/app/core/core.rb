@@ -15,7 +15,6 @@ module Flumtter
   data_path = UserPath.join("data", "data.bin")
   Config = Marshal.load(File.read(data_path)) rescue {}
   at_exit {
-    puts 'data saved'
     File.write(data_path, Marshal.dump(Config))
   }
 

@@ -77,6 +77,8 @@ module Flumtter
         puts e.message.color
       rescue Twitter::Error::Unauthorized => e
         puts e.message.color
+      rescue Twitter::Error::Forbidden => e
+        puts e.message.color
       end
     end
 

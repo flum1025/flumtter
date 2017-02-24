@@ -10,9 +10,18 @@ This client is supported multiple account.
 and help
 
     $ flumtter -h
+    Usage: flumtter [options]
+    -n, --name VALUE                 account name
+    -i, --index VALUE                account index
+    -s, --non_stream                 without stream
+    -d, --debug                      debug mode
+        --args VALUE
+        --timeline_load VALUE        load timeline num
+        --[no-]timeline_load?        load timeline on init
+        --pry                        console mode
 
 ## Customize
-There is a configuration file on '~/.flumtter/setting/setting.rb'. This setting is overwritten by start option. This file needs to be described in ruby's hash format. This file will be created automatically and should ONLY be edited by someone who knows what they are doing.
+There is a configuration file on `~/.flumtter/setting/setting.rb`. This setting is overwritten by start option. This file needs to be described in ruby's hash format. This file will be created automatically and should ONLY be edited by someone who knows what they are doing.
 
 ```ruby
 Setting = {
