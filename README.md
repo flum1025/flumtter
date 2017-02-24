@@ -1,4 +1,7 @@
 # Flumtter
+
+![](https://github.com/flum1025/flumtter/wiki/images/main.png)
+
 Flumtter is CLI Twitter client.
 This client is supported multiple account.
 
