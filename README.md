@@ -20,6 +20,8 @@ and help
         --[no-]timeline_load?        load timeline on init
         --pry                        console mode
 
+Detailed usage: [How To Use](https://github.com/flum1025/flumtter/wiki/How-To-Use)
+
 ## Customize
 There is a configuration file on `~/.flumtter/setting/setting.rb`. This setting is overwritten by start option. This file needs to be described in ruby's hash format. This file will be created automatically and should ONLY be edited by someone who knows what they are doing.
 
