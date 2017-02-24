@@ -1,9 +1,13 @@
 module Flumtter
   plugin do
     Keyboard.add("a", "Account Selector") do |m, twitter|
-      twitter.kill
-      twitter.set AccountSelector.select
-      twitter.start
+      if account = AccountSelector.select
+        twitter.kill
+        twitter.set account
+        twitter.start
+      else
+        puts 'not change'
+      end
     end
   end
 end

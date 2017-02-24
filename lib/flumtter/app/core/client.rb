@@ -2,6 +2,8 @@ require 'twitter'
 
 module Flumtter
   class Client
+    class NoSetAccount < StandardError; end
+
     include Util
     attr_reader :account, :sthread, :ethread, :rest
 
@@ -24,9 +26,12 @@ module Flumtter
       set(account)
       start
       Keyboard.input(self)
+    rescue NoSetAccount
+      exit
     end
 
     def set(account)
+      raise NoSetAccount if account.nil?
       @account = account
       @rest = Twitter::REST::Client.new(@account.keys)
       @stream = Twitter::Streaming::Client.new(@account.keys)
