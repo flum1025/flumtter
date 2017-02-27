@@ -25,7 +25,7 @@ module Flumtter
         Toast.new("Followed by #{object.source.screen_name}") do |t|
           t.title title(twitter)
         end
-      elsif type.include?(:favorite) && object.target_object.user.id == twitter.account.id && object.source.user.id != twitter.account.id
+      elsif type.include?(:favorite) && object.target_object.user.id == twitter.account.id && object.source.id != twitter.account.id
         Toast.new(object.target_object.text) do |t|
           t.title title(twitter)
           t.subtitle "Favorited by #{object.source.screen_name}"
