@@ -20,6 +20,10 @@ module Flumtter
     @@account_list = (Config[:accounts] ||= []).map{|a|Account.new(a)}
 
     class << self
+      def list
+        @@account_list
+      end
+
       def select(options={})
         if options[:id]
           @@account_list[options[:id]]
