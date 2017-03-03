@@ -34,13 +34,11 @@ module Flumtter
 
     run_opt(:tmux) do |v, options|
       require 'yaml'
-      accounts = if options[:names] && !options[:names].empty?
-        options[:names]
-      else
-        AccountSelector.list.map{|a|a.screen_name}
+      if options[:names] && !options[:names].empty?
+        accounts = options[:names]
+        setting = mux_setting(accounts.map{|a|pane_setting(a)})
+        set_yml setting
       end
-      setting = mux_setting(accounts.map{|a|pane_setting(a)})
-      set_yml setting
       `tmuxinator start flumtter`
       exit
     end
