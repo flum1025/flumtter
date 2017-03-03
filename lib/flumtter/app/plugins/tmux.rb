@@ -44,5 +44,15 @@ module Flumtter
       `tmuxinator start flumtter`
       exit
     end
+
+    Keyboard.add("-", "synchronize-panes on") do
+      `tmux set-window-option synchronize-panes on`
+      puts 'synchronize-panes on'.color(:cyan)
+    end
+
+    Keyboard.add("=", "synchronize-panes off") do
+      `tmux set-window-option synchronize-panes off`
+      puts 'synchronize-panes off'.color(:cyan)
+    end
   end
 end
