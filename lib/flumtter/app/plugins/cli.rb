@@ -14,5 +14,11 @@ module Flumtter
         end
       end
     end
+    add_opt do |opt, options|
+      opt.on('-l', '--list', 'user list') do
+        puts AccountSelector.list_to_s
+        exit
+      end
+    end
   end
 end

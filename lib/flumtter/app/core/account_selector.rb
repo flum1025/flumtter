@@ -24,6 +24,10 @@ module Flumtter
         @@account_list
       end
 
+      def list_to_s
+        @@account_list.map.with_index{|a,i|"#{i}: #{a.screen_name}"}.join("\n")
+      end
+
       def select(options={})
         if options[:id]
           @@account_list[options[:id]]
@@ -37,7 +41,7 @@ module Flumtter
             Please input your account number.
             Input 'regist' if you want to regist new account.
 
-            #{@@account_list.map.with_index{|a,i|"#{i}: #{a.screen_name}"}.join("\n")}
+            #{list_to_s}
           EOF
           dialog.command(/^regist$/, "account registration"){|m|regist}
           dialog.command(/^([#{@@account_list.size.times.to_a.join(",")}])$/, "account index"){|m|@@account_list[m[1].to_i]}
