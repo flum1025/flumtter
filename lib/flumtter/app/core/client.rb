@@ -24,6 +24,7 @@ module Flumtter
       @queue = Queue.new
       @mutex = Mutex.new
       set(account)
+      Cli.run(self)
       start
       Keyboard.input(self)
     rescue NoSetAccount
