@@ -11,6 +11,10 @@ module Flumtter
       EOF
     end
 
+    def parse_time(time)
+      time.getlocal.strftime("%Y/%m/%d %H:%M:%S")
+    end
+
     def parse_index(text, with_screen_name=false)
       if m = text.match(index_regexp)
         obj = id2obj(m[1])

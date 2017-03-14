@@ -57,6 +57,8 @@ module Flumtter
       end
 
       class Element
+        include Util
+
         attr_reader :object
         def initialize(object, index)
           @object = object

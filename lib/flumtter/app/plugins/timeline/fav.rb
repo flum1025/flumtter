@@ -16,7 +16,7 @@ module Flumtter
       end
 
       def created_at
-        @object.target_object.created_at.strftime("%Y/%m/%d %H:%M:%S")
+        parse_time(@object.target_object.created_at)
       end
 
       def body
