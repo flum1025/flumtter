@@ -14,6 +14,9 @@ module Flumtter
         end
       end
     end
+    Cli.add("--tpry", "pry with twitter instance") do |twitter|
+      binding.pry
+    end
     add_opt do |opt, options|
       opt.on('-l', '--list', 'user list') do
         puts AccountSelector.list_to_s
