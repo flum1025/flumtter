@@ -18,7 +18,24 @@ module Flumtter
 
     class ListBase < Buf::Element
       def element
-        @text ||= "#{@index}: #{@object.name}"
+        @text ||= <<~EOF
+          #{header}
+          #{details}
+        EOF
+      end
+
+      private
+      def header
+        "#{@index}: #{@object.name} ".ljust(width, ?-)
+      end
+
+      def details
+        {
+          mode: @object.mode,
+          description: @object.description,
+          member_count: @object.member_count,
+          created_at: parse_time(@object.created_at)
+        }.indent(1)
       end
     end
 
