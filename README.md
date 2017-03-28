@@ -3,7 +3,7 @@
 Flumtter is CLI Twitter client.
 This client is supported multiple account and plugin.
 
-![](https://github.com/flum1025/flumtter/wiki/images/main.png)
+![](https://github.com/flum1025/flumtter/wiki/images/main.gif)
 
 ## Installation
     $ gem install flumtter
@@ -19,9 +19,15 @@ and help
     -s, --non_stream                 without stream
     -d, --debug                      debug mode
         --args VALUE
+        --tweet VALUES               new tweet
+        --tweet_with_image=V,V       new tweet with image
+        --tpry                       pry with twitter instance
+    -l, --list                       user list
         --timeline_load VALUE        load timeline num
         --[no-]timeline_load?        load timeline on init
         --pry                        console mode
+        --tmux                       enable tmux mode
+        --names=V,V,...              set account names with tmux
 
 Detailed usage: [How To Use](https://github.com/flum1025/flumtter/wiki/How-To-Use)
 
