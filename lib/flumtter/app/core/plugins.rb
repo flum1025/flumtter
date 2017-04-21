@@ -1,4 +1,4 @@
-require_relative 'Initializer'
+require_relative 'initializer'
 
 module Flumtter
   module Plugins

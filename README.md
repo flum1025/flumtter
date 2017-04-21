@@ -1,12 +1,21 @@
 # Flumtter
 
 Flumtter is CLI Twitter client.
-This client is supported multiple account and plugin.
+This client is supported multiple account, multicolumn and plugin.
 
 ![](https://github.com/flum1025/flumtter/wiki/images/main.gif)
 
+## Dependencies
+If you use tmux mode, you have to install `tmux`.
+
 ## Installation
     $ gem install flumtter
+
+- On Ubuntu
+    $ apt install ruby ruby-dev build-essential libncurses5-dev tmux
+
+- On MacOSX
+    $ brew install ruby tmux
 
 ## Usage
     $ flumtter

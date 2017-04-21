@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dispel', '~> 0.0.8'
   spec.add_dependency 'terminal-notifier', '~> 1.7.1'
   spec.add_dependency 'twitter', '~> 6.1.0'
+  spec.add_dependency 'tmuxinator'
 end
