@@ -12,10 +12,12 @@ If you use tmux mode, you have to install `tmux`.
     $ gem install flumtter
 
 - On Ubuntu
-    $ apt install ruby ruby-dev build-essential libncurses5-dev tmux
+
+        $ apt install ruby ruby-dev build-essential libncurses5-dev tmux
 
 - On MacOSX
-    $ brew install ruby tmux
+
+        $ brew install ruby tmux
 
 ## Usage
     $ flumtter
