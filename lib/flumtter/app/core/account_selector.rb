@@ -46,6 +46,11 @@ module Flumtter
             #{list_to_s}
           EOF
           dialog.command(/^regist$/, "account registration"){|m|regist}
+          dialog.command(/^del ([#{@@account_list.size.times.to_a.join(",")}])$/, "delete account") do |m|
+            Config[:accounts].delete_at(m[1].to_i)
+            @@account_list.delete_at(m[1].to_i)
+            select
+          end
           dialog.command(/^([#{@@account_list.size.times.to_a.join(",")}])$/, "account index"){|m|@@account_list[m[1].to_i]}
           dialog.show(true)
         end

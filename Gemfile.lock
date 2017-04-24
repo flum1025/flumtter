@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flumtter (5.7.2)
+    flumtter (5.7.3)
       dispel (~> 0.0.8)
       oauth (~> 0.5.1)
       pry (~> 0.10.4)
