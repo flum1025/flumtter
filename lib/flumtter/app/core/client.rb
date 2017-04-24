@@ -28,6 +28,7 @@ module Flumtter
       start
       Keyboard.input(self)
     rescue NoSetAccount
+      STDERR.puts "Error: Account Not Found".color
       exit
     end
 

@@ -28,6 +28,13 @@ module Flumtter
           exit
         end
       end
+
+      def multiuser(twitter)
+        Setting[:names].each do |name|
+          twitter.set AccountSelector.select(name: name)
+          yield
+        end
+      end
     end
   end
 end

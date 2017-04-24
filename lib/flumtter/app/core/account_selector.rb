@@ -33,6 +33,8 @@ module Flumtter
           @@account_list[options[:id]]
         elsif options[:name]
           @@account_list.select{|a|a.screen_name == options[:name]}.first
+        elsif options[:names]
+          @@account_list.select{|a|options[:names].include?(a.screen_name)}.first
         elsif @@account_list.empty?
           regist
           @@account_list.first
