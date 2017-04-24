@@ -13,22 +13,10 @@ module Flumtter
     FileUtils.cp_r(SourcePath.join(".flumtter"), UserPath)
   end
 
-  old_data_path = UserPath.join("data", "data.bin")
-  data_path = UserPath.join("data", "keys.json")
-
-  Config = if File.exist?(data_path)
-    JSON.parse(File.read(data_path), {:symbolize_names => true})
-  elsif File.exist?(old_data_path)
-    puts "Migrating config data.bin to keys.json"
-    config = Marshal.load(File.read(old_data_path)) rescue {}
-    File.write(data_path, config.to_json)
-    File.unlink(old_data_path)
-    puts "Migration Success"
-    config
-  end
-
+  data_path = UserPath.join("data", "data.bin")
+  Config = Marshal.load(File.read(data_path)) rescue {}
   at_exit {
-    File.write(data_path, Config.to_json)
+    File.write(data_path, Marshal.dump(Config))
   }
 
   Thread.abort_on_exception = true
