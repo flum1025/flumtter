@@ -30,8 +30,12 @@ module Flumtter
       end
 
       def multiuser(twitter)
-        Setting[:names].each do |name|
-          twitter.set AccountSelector.select(name: name)
+        if Setting[:names]
+          Setting[:names].each do |name|
+            twitter.set AccountSelector.select(name: name)
+            yield
+          end
+        else
           yield
         end
       end
