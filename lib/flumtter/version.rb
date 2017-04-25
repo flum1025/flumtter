@@ -1,3 +1,3 @@
 module Flumtter
-  VERSION = "5.8.0"
+  VERSION = "5.9.0"
 end
