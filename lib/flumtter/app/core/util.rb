@@ -106,6 +106,10 @@ module Flumtter
       Flumtter.sarastire(*args)
     end
 
+    def sarastire_user(*args)
+      Flumtter.sarastire_user(*args)
+    end
+
     def on_event(*args,&blk)
       Flumtter.on_event(*args,&blk)
     end

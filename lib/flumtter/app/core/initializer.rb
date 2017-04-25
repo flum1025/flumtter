@@ -25,7 +25,7 @@ module Initializer
     opt.parse!(ARGV)
     options.each{|k,v|@events[k].call(v,options) unless @events[k].nil?}
     options
-  rescue OptionParser::InvalidOption => e
+  rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
     STDERR.puts e.message
     exit false
   end
