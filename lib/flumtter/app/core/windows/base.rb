@@ -12,5 +12,9 @@ module Flumtter
         @width = [width,title.title.exact_size+2].max
       end
     end
+
+    def self.close
+      raise Dispel::CloseWindow
+    end
   end
 end

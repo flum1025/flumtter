@@ -42,6 +42,7 @@ module Flumtter
         unless indexes.empty?
           command(/^del\s+[#{indexes}]/, 'delete plugin(index)') do |m|
             FileUtils.rm_r(Plugins::PluginManager::Plugins.delete_at(m[1].to_i))
+            Window.close
           end
         end
         command(/^update/, 'update all plugins') do
@@ -64,7 +65,7 @@ module Flumtter
     add_opt do |opt, options|
       opt.on('--add_plugin VALUES', "add new plugin") do |v|
         if m = v.match(/[(:\/\/)@].+[:\/](.+)\/(.+?)(\.git)?$/)
-          `git clone #{v} #{File.join(self::PluginDir, m[2], m[3])}`
+          `git clone #{v} #{File.join(self::PluginDir, m[1], m[2])}`
         else
           STDERR.puts "ERROR: invalid path".color
         end
