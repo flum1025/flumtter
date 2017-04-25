@@ -5,10 +5,13 @@ module Flumtter
 
   module Util
     def error(e)
-      print <<~EOF.color(Setting[:color][:error])
+      text = <<~EOF
         #{e.backtrace.shift}: #{e.message} (#{e.class})
         #{e.backtrace.join("\n")}
       EOF
+      e.class.ancestors.include?(StandardError) ? logger.error(text) : logger.fatal(text)
+      print text.color(Setting[:color][:error])
+
     end
 
     def parse_time(time)
@@ -100,6 +103,10 @@ module Flumtter
       else
         raise UnSupportError
       end
+    end
+
+    def logger
+      Flumtter.logger
     end
 
     def sarastire(*args)

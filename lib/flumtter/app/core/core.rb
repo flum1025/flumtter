@@ -1,7 +1,9 @@
 require 'pry'
 require 'json'
+require 'logger'
 
 module Flumtter
+  StartTime = Time.now
   SourcePath = File.expand_path('../../', __FILE__)
   UserPath = File.expand_path('~/.flumtter')
   [SourcePath, UserPath].each do |path|
@@ -13,6 +15,12 @@ module Flumtter
     FileUtils.cp_r(SourcePath.join(".flumtter"), UserPath)
   end
 
+  Logger = Logger.new(UserPath.join('flumtter.log'))
+  Logger.level = ARGV.include?('--debug') ? ::Logger::DEBUG : ::Logger::INFO
+  Logger.datetime_format = "%Y-%m-%d %H:%M:%S.%L "
+
+  Logger.debug("Start: #{ARGV.join(" ")}")
+
   data_path = UserPath.join("data", "data.bin")
   Config = Marshal.load(File.read(data_path)) rescue {}
   at_exit {
@@ -22,14 +30,24 @@ module Flumtter
   Thread.abort_on_exception = true
 
   module_function
-  def sarastire(path, file=nil)
-    path = file.nil? ? SourcePath.join(path, '*.rb') : SourcePath.join(path, file)
-    Dir.glob(path).each{|plugin|require plugin}
+  def logger
+    Logger
   end
 
-  def sarastire_user(path, file=nil)
-    path = file.nil? ? UserPath.join(path, '*.rb') : UserPath.join(path, file)
-    Dir.glob(path).each{|plugin|require plugin}
+  def load_plugin(source, path, file=nil)
+    path = file.nil? ? source.join(path, '*.rb') : source.join(path, file)
+    Dir.glob(path).each do |plugin|
+      logger.debug("Load: #{plugin}")
+      require plugin
+    end
+  end
+
+  def sarastire(*args)
+    load_plugin(SourcePath, *args)
+  end
+
+  def sarastire_user(*args)
+    load_plugin(UserPath, *args)
   end
 
   @events = Hash.new{|h,k|h[k] = []}
@@ -49,12 +67,22 @@ module Flumtter
   sarastire 'plugins'
   sarastire_user 'plugins'
 
+  logger.debug("Plugin load complete.")
+
   TITLE.terminal_title
+
+  logger.debug("Initialization time(#{Time.now-StartTime}s)")
 
   def start
     options = Initializer.optparse
     Setting.merge!(options)
     Client.new AccountSelector.select(options)
   rescue Interrupt
+  rescue Exception => ex
+    logger.fatal(<<~EOS)
+      #{ex.backtrace.shift}: #{ex.message} (#{ex.class})
+      #{ex.backtrace.join("\n")}
+    EOS
+    raise ex
   end
 end
