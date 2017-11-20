@@ -1,3 +1,5 @@
+require_relative 'buf_window'
+
 module Flumtter
   class Window::TweetBase < Window::Buf::Element
     def id
